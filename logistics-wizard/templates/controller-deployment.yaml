@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "logistics-wizard.fullname" . }}-controller
+  labels:
+    app: {{ include "logistics-wizard.name" . }}-controller
+    chart: {{ include "logistics-wizard.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "logistics-wizard.name" . }}-controller
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "logistics-wizard.name" . }}-controller
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: rvennam/logistics-wizard-controller:latest
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: "ERP_SERVICE"
+              value: http://{{ include "logistics-wizard.fullname" . }}-erp
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
