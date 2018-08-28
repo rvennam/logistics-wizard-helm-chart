@@ -14,6 +14,8 @@ In this variation of the Logistics Wizard deployment, the ERP and Controller ser
 - [Helm](https://docs.helm.sh/using_helm/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
+## Deploy
+
 1. Create Standard/Paid cluster on IKS and set up kubectl and run `helm init`
 2. Open `logistics-wizard/values.yaml` and update `hosts` field with your Ingress subdomain.
 ```
@@ -21,3 +23,7 @@ In this variation of the Logistics Wizard deployment, the ERP and Controller ser
     - mycluster-472085.us-south.containers.appdomain.cloud
 ```
 3. Run `helm install --name mylw ./logistics-wizard/`
+
+## Clean up
+
+3. Run `helm delete mylw --purge`
